@@ -5,11 +5,23 @@ using UnityEngine;
 
 public class Table_Script : MonoBehaviour
 {
-    public PickUp pickUpScript;
+    
     public Transform Chemical_1_Slot;
     public Transform Chemical_2_Slot;
 
-    public bool hasChemical = true;
+    private PickUp pickUpScript;
+
+    private void Start()
+    {
+        pickUpScript = FindObjectOfType<PickUp>();
+        //pickUpScript = GameObject.Find("Cube").GetComponent<PickUp>();
+        //pickUpScript = GameObject.Find("Cube (1)").GetComponent<PickUp>();
+
+        if (pickUpScript == null)
+        {
+            Debug.LogError("PickUp script not found in the scene.");
+        }
+    }
 
     private void Update()
     {
@@ -18,23 +30,55 @@ public class Table_Script : MonoBehaviour
 
     private void DropOnTable()
     {
-       Transform targetSlot = Chemical_1_Slot.childCount == 0 ? Chemical_1_Slot : Chemical_2_Slot;
-       pickUpScript.Chemical.transform.position = Chemical_1_Slot.transform.position;
-       pickUpScript.Chemical.transform.rotation = Chemical_1_Slot.transform.rotation;
+        
+    }
 
-       pickUpScript.Chemical.GetComponent<Rigidbody>().isKinematic = false;
-       pickUpScript.Chemical.GetComponent<MeshCollider>().enabled = true;
+    private void PlaceChemicalInSlot(Transform slot)
+    {
+        if (pickUpScript != null && pickUpScript.Chemical != null)
+        {
+            pickUpScript.Chemical.transform.position = slot.position;
+            pickUpScript.Chemical.transform.rotation = slot.rotation;
 
-       pickUpScript.Chemical.transform.SetParent(targetSlot);
+
+            pickUpScript.Chemical.GetComponent<Rigidbody>().isKinematic = false;
+            pickUpScript.Chemical.GetComponent<MeshCollider>().enabled = true;
+
+            pickUpScript.Chemical.transform.SetParent(slot);
+
+            //PickUp.isHoldingItem = false;
+        }
+        else
+        {
+            Debug.LogError("pickUpScript or Chemical is not assigned.");
+        }
     }
 
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            if (Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.F))
             {
-                DropOnTable();
+                if (pickUpScript.PickUpSlot.childCount == 1)
+                {
+                    Transform itemInSlot = pickUpScript.PickUpSlot.GetChild(0);
+                    if (itemInSlot == pickUpScript.Chemical.transform)
+                    { 
+                        if (Chemical_1_Slot.childCount == 0)
+                        {
+                            PlaceChemicalInSlot(Chemical_1_Slot);
+                        }
+                        else if (Chemical_2_Slot.childCount == 0)
+                        {
+                            PlaceChemicalInSlot(Chemical_2_Slot);
+                        }
+                        else
+                        {
+                            Debug.Log("Full");
+                        }
+                    }  
+                }
             }
         }
 

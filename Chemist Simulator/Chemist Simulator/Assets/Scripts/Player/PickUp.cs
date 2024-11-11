@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class PickUp : MonoBehaviour
 {
-    public Table_Script tableScript;
     public GameObject Chemical;
     public Transform PickUpSlot;
 
-    private static bool isHoldingItem = false;
+    //public static bool isHoldingItem = false;
 
     void Start()
     {
@@ -19,35 +18,31 @@ public class PickUp : MonoBehaviour
     void Update()
     {
         
-        if (Input.GetKey(KeyCode.Q) && isHoldingItem)
+        if (Input.GetKey(KeyCode.Q))
         {
             Drop();
         }
     }
 
     void Drop()
-    {
-        
+    { 
         PickUpSlot.DetachChildren();
         Chemical.GetComponent<Rigidbody>().isKinematic = false;
         Chemical.GetComponent<MeshCollider>().enabled = true;
-
-        
-        isHoldingItem = false;
+        //isHoldingItem = false;
     }
 
     void PickUpChemical()
     {
-        
+        //isHoldingItem = true;
+
         Chemical.GetComponent<Rigidbody>().isKinematic = true;
         Chemical.GetComponent<MeshCollider>().enabled = false;
 
         
         Chemical.transform.position = PickUpSlot.position;
         Chemical.transform.rotation = PickUpSlot.rotation;
-        Chemical.transform.SetParent(PickUpSlot);
-
-        isHoldingItem = true;
+        Chemical.transform.SetParent(PickUpSlot);   
     }
 
     private void OnTriggerStay(Collider other)
@@ -56,10 +51,9 @@ public class PickUp : MonoBehaviour
         if (other.CompareTag("Player") && Input.GetKey(KeyCode.E))
         {
            
-            if (!isHoldingItem)
+            //if (!isHoldingItem)
             {
                 PickUpChemical();
-                tableScript.Chemical_1_Slot = other.gameObject.transform;
             }
         }
     }
