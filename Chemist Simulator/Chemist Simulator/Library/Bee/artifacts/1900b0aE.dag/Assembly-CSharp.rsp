@@ -359,7 +359,7 @@
 "Assets/Scripts/Player/Chair.cs"
 "Assets/Scripts/Player/PickUp.cs"
 "Assets/Scripts/Player/PlayerMovement.cs"
-"Assets/Table.cs"
+"Assets/Scripts/Player/Table.cs"
 -langversion:9.0
 /deterministic
 /optimize+

@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class PickUp : MonoBehaviour
 {
+    public Table_Script tableScript;
     public GameObject Chemical;
     public Transform PickUpSlot;
 
+    private static bool isHoldingItem = false;
+
     void Start()
     {
+        
         Chemical.GetComponent<Rigidbody>().isKinematic = true;
     }
 
-
     void Update()
     {
-        if (Input.GetKey(KeyCode.Q))
+        
+        if (Input.GetKey(KeyCode.Q) && isHoldingItem)
         {
             Drop();
         }
@@ -23,34 +27,40 @@ public class PickUp : MonoBehaviour
 
     void Drop()
     {
+        
         PickUpSlot.DetachChildren();
-        Chemical.transform.eulerAngles = new Vector3(Chemical.transform.position.x, Chemical.transform.position.z, Chemical.transform.position.y);
         Chemical.GetComponent<Rigidbody>().isKinematic = false;
         Chemical.GetComponent<MeshCollider>().enabled = true;
+
+        
+        isHoldingItem = false;
     }
 
     void PickUpChemical()
     {
+        
         Chemical.GetComponent<Rigidbody>().isKinematic = true;
-
-        Chemical.transform.position = PickUpSlot.transform.position;
-        Chemical.transform.rotation = PickUpSlot.transform.rotation;
-
         Chemical.GetComponent<MeshCollider>().enabled = false;
 
+        
+        Chemical.transform.position = PickUpSlot.position;
+        Chemical.transform.rotation = PickUpSlot.rotation;
         Chemical.transform.SetParent(PickUpSlot);
+
+        isHoldingItem = true;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.gameObject.tag == "Player")
+        
+        if (other.CompareTag("Player") && Input.GetKey(KeyCode.E))
         {
-            if (Input.GetKey(KeyCode.E))
+           
+            if (!isHoldingItem)
             {
                 PickUpChemical();
+                tableScript.Chemical_1_Slot = other.gameObject.transform;
             }
         }
-        
     }
-
 }
