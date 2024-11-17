@@ -10,8 +10,8 @@ public class PlayerPickUp : MonoBehaviour
     public KeyCode PickUpKey = KeyCode.E; // Key to pick up or drop items
     public KeyCode DropToSlotKey = KeyCode.F;
 
-    [HideInInspector] public GameObject Chemical; // Currently held chemical
-    public static bool isHoldingItem = false; // Tracks whether the player is holding an item
+    [HideInInspector] public GameObject Chemical; 
+    public static bool isHoldingItem = false; // Check whether the player is holding an item
 
     private void Update()
     {
@@ -34,11 +34,9 @@ public class PlayerPickUp : MonoBehaviour
 
     private void TryPickUpItem()
     {
-        // Raycast to detect pickable objects within range
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, PickUpRange))
         {
-            // Check if the object has a "Chemical" tag
             if (hit.collider.CompareTag("Chemical"))
             {
                 PickUpItem(hit.collider.gameObject);
@@ -48,13 +46,16 @@ public class PlayerPickUp : MonoBehaviour
 
     private void PickUpItem(GameObject item)
     {
-        if (isHoldingItem) return; // Prevent picking up multiple items
+        if (isHoldingItem)
+        {
+            return; // Prevent picking up multiple items
+        }
 
         // Attach the item to the player's pick-up slot
         Chemical = item;
         Chemical.transform.SetParent(PickUpSlot);
-        Chemical.transform.localPosition = Vector3.zero; // Reset position relative to the slot
-        Chemical.transform.localRotation = Quaternion.identity; // Reset rotation
+        Chemical.transform.localPosition = Vector3.zero; 
+        Chemical.transform.localRotation = Quaternion.identity; 
 
         // Disable item's physics for holding
         Rigidbody rb = Chemical.GetComponent<Rigidbody>();
@@ -80,7 +81,8 @@ public class PlayerPickUp : MonoBehaviour
         Collider collider = Chemical.GetComponent<Collider>();
         if (collider != null) collider.enabled = true;
 
-        // Optionally, drop the item in front of the player
+        
+        //Drop the item in front of the player
         Chemical.transform.position = transform.position + transform.forward;
 
         Chemical = null;

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5832936434495700176}
   - component: {fileID: 61438866885262472}
   - component: {fileID: 3074644919559329530}
-  - component: {fileID: 8282467604252701645}
   - component: {fileID: 2871314307606141921}
   - component: {fileID: 2645097776124804841}
   m_Layer: 0
@@ -62,6 +61,8 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -108,20 +109,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5, y: 5, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8282467604252701645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7338845757324963745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c66e8011da45f454b8822f89ff42dbb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Chemical: {fileID: 7338845757324963745}
-  PickUpSlot: {fileID: 0}
 --- !u!54 &2871314307606141921
 Rigidbody:
   m_ObjectHideFlags: 0
