@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerPickUp : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class PlayerPickUp : MonoBehaviour
 
     [HideInInspector] public GameObject Chemical; 
     public static bool isHoldingItem = false; // Check whether the player is holding an item
+
+    public TMP_Text HintText;
+    
 
     private void Update()
     {
@@ -37,12 +41,14 @@ public class PlayerPickUp : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, PickUpRange))
         {
+            // Check if the hit object has the "Chemical" tag
             if (hit.collider.CompareTag("Chemical"))
             {
                 PickUpItem(hit.collider.gameObject);
             }
         }
     }
+
 
     private void PickUpItem(GameObject item)
     {
@@ -65,6 +71,10 @@ public class PlayerPickUp : MonoBehaviour
         if (collider != null) collider.enabled = false;
 
         isHoldingItem = true;
+
+        string chemicalName = item.name;
+        string hint = GetHintForChemical(chemicalName);
+        HintText.text = hint;
     }
 
     private void DropItem()
@@ -101,4 +111,26 @@ public class PlayerPickUp : MonoBehaviour
             }
         }
     }
+
+    private string GetHintForChemical(string chemicalName)
+    {
+        switch (chemicalName)
+        {
+            case "H2":
+                return "Hint: Mix Hydrogen with Oxygen to create Water.";
+            case "Hydrogen":
+                return "Hint: Mix Hydrogen and Hydrogen to create H2";
+            case "Methane":
+                return "Hint: Mix Methane with Oxygen to create Carbon Dioxide.";
+            case "Oxygen":
+                return "Hint: Oxygen can react with multiple chemicals like Hydrogen and Methane.";
+            case "Sodium Hydroxide":
+                return "Hint: Mix Sodium Hydroxide with Hydrochloric Acid to create Salt Water.";
+            case "Hydrochloric Acid":
+                return "Hint: Mix Hydrochloric Acid with Sodium Hydroxide or Zinc.";
+            default:
+                return "Hint: No specific hint for this chemical. Try experimenting!";
+        }
+    }
+
 }

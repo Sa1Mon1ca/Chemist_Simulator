@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
 
 public class Table_Script : MonoBehaviour
 {
@@ -8,7 +10,7 @@ public class Table_Script : MonoBehaviour
     public Transform Chemical_2_Slot;
     public Transform Result_Slot;
     public GameObject H2Prefab;
-    public GameObject WaterPrefab; 
+    public GameObject WaterPrefab;
     public GameObject CO2Prefab;
     public GameObject SodiumChloridePrefab;
     public GameObject SodiumSulfatePrefab;
@@ -24,18 +26,60 @@ public class Table_Script : MonoBehaviour
     public GameObject CalciumOxidePrefab;
     public GameObject MagnesiumOxidePrefab;
 
+    private ObjectiveManager objectiveManager;
+    private PlayerPickUp pickUpScript;  // Reference to the PlayerPickUp script
+    public TMP_Text HintText;  // Reference to the HintText from PlayerPickUp script
 
-
-    private PlayerPickUp pickUpScript;
+    private Dictionary<string, List<string>> possibleMixes = new Dictionary<string, List<string>>();
 
     private void Start()
     {
-        
+        InitializeMixes();
+
         GameObject chemicalObject = GameObject.FindGameObjectWithTag("Chemical");
         if (chemicalObject != null)
         {
             pickUpScript = chemicalObject.GetComponent<PlayerPickUp>();
         }
+        GameObject managerObject = GameObject.FindGameObjectWithTag("ObjectiveManager");
+        if (managerObject != null)
+        {
+            objectiveManager = managerObject.GetComponent<ObjectiveManager>();
+        }
+
+        // Make sure the hint text is empty at the start
+        if (HintText != null)
+        {
+            HintText.text = "";
+        }
+    }
+
+    private void InitializeMixes()
+    {
+        // Define possible mixes for each chemical
+        possibleMixes["H2"] = new List<string> { "Oxygen" };
+        possibleMixes["Oxygen"] = new List<string> { "H2", "Methane", "Magnesium", "Hydrogen Peroxide", "Heat", "Copper Sulfate" };
+        possibleMixes["Methane"] = new List<string> { "Oxygen" };
+        possibleMixes["Hydrogen"] = new List<string> { "H2" };
+        possibleMixes["Hydrogen (Clone)"] = new List<string> { "Hydrogen" };
+        possibleMixes["Sodium Hydroxide"] = new List<string> { "Hydrochloric Acid" };
+        possibleMixes["Hydrochloric Acid"] = new List<string> { "Sodium Hydroxide", "Zinc", "Silver Nitrate" };
+        possibleMixes["Sulfuric Acid"] = new List<string> { "Sodium Carbonate" };
+        possibleMixes["Sodium Carbonate"] = new List<string> { "Sulfuric Acid" };
+        possibleMixes["Copper Sulfate"] = new List<string> { "Iron" };
+        possibleMixes["Iron"] = new List<string> { "Copper Sulfate" };
+        possibleMixes["Zinc"] = new List<string> { "Hydrochloric Acid" };
+        possibleMixes["Silver Nitrate"] = new List<string> { "Sodium Chloride" };
+        possibleMixes["Sodium Chloride"] = new List<string> { "Silver Nitrate" };
+        possibleMixes["Lead Nitrate"] = new List<string> { "Potassium Iodide" };
+        possibleMixes["Potassium Iodide"] = new List<string> { "Lead Nitrate" };
+        possibleMixes["Calcium Carbonate"] = new List<string> { "Heat" };
+        possibleMixes["Heat"] = new List<string> { "Calcium Carbonate", "Cobalt Chloride (Hydrated)" };
+        possibleMixes["Hydrogen Peroxide"] = new List<string> { "Manganese Dioxide" };
+        possibleMixes["Manganese Dioxide"] = new List<string> { "Hydrogen Peroxide" };
+        possibleMixes["Magnesium"] = new List<string> { "Oxygen" };
+        possibleMixes["Cobalt Chloride (Hydrated)"] = new List<string> { "Heat" };
+        possibleMixes["Cobalt Chloride (Anhydrous)"] = new List<string> { };
     }
 
     private void Update()
@@ -48,7 +92,6 @@ public class Table_Script : MonoBehaviour
 
     private bool AreBothSlotsFull()
     {
-        // Check if both slots have at least one child
         return Chemical_1_Slot.childCount > 0 && Chemical_2_Slot.childCount > 0;
     }
 
@@ -57,95 +100,102 @@ public class Table_Script : MonoBehaviour
         string chemical1 = Chemical_1_Slot.GetChild(0).name;
         string chemical2 = Chemical_2_Slot.GetChild(0).name;
 
-        //Check combinations
-        if ((chemical1 == "Hydrogen" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "Hydrogen"))
+        if (possibleMixes.ContainsKey(chemical1) && possibleMixes[chemical1].Contains(chemical2) || possibleMixes.ContainsKey(chemical2) && possibleMixes[chemical2].Contains(chemical1))
         {
-            Debug.Log("Hydrogen + Oxygen → Water");
-            CreateResultingChemical(WaterPrefab); // Water prefab
-        }
-        else if ((chemical1 == "Hydrogen" && chemical2 == "Hydrogen") || (chemical1 == "Hydrogen (Clone)" && chemical2 == "Hydrogen (Clone)"))
-        {
-            Debug.Log("Hydrogen + Hydrogen → H2");
-            CreateResultingChemical(H2Prefab); // H2 prefab
-        }
-        else if ((chemical1 == "Methane" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "Methane"))
-        {
-            Debug.Log("Methane + Oxygen → Carbon Dioxide + Water");
-            CreateResultingChemical(CO2Prefab); // Prefab for CO2 and water combo
-            CreateResultingChemical(WaterPrefab);
-        }
-        else if ((chemical1 == "Hydrochloric Acid" && chemical2 == "Sodium Hydroxide") || (chemical1 == "Sodium Hydroxide" && chemical2 == "Hydrochloric Acid"))
-        {
-            Debug.Log("Hydrochloric Acid + Sodium Hydroxide → Sodium Chloride + Water");
-            CreateResultingChemical(SodiumChloridePrefab); // Prefab for salt water
-            CreateResultingChemical(WaterPrefab);
-        }
-        else if ((chemical1 == "Sulfuric Acid" && chemical2 == "Sodium Carbonate") || (chemical1 == "Sodium Carbonate" && chemical2 == "Sulfuric Acid"))
-        {
-            Debug.Log("Sulfuric Acid + Sodium Carbonate → Sodium Sulfate + Carbon Dioxide + Water");
-            CreateResultingChemical(SodiumSulfatePrefab);
-            CreateResultingChemical(CO2Prefab);
-            CreateResultingChemical(WaterPrefab);
-        }
-        else if ((chemical1 == "Copper Sulfate" && chemical2 == "Iron") || (chemical1 == "Iron" && chemical2 == "Copper Sulfate"))
-        {
-            Debug.Log("Copper Sulfate + Iron → Iron Sulfate + Copper");
-            CreateResultingChemical(IronSulfatePrefab);
-            CreateResultingChemical(CopperPrefab);
-        }
-        else if ((chemical1 == "Zinc" && chemical2 == "Hydrochloric Acid") || (chemical1 == "Hydrochloric Acid" && chemical2 == "Zinc"))
-        {
-            Debug.Log("Zinc + Hydrochloric Acid → Zinc Chloride + Hydrogen");
-            CreateResultingChemical(ZincChloridePrefab);
-            CreateResultingChemical(H2Prefab);
-        }
-        else if ((chemical1 == "Silver Nitrate" && chemical2 == "Sodium Chloride") || (chemical1 == "Sodium Chloride" && chemical2 == "Silver Nitrate"))
-        {
-            Debug.Log("Silver Nitrate + Sodium Chloride → Silver Chloride + Sodium Nitrate");
-            CreateResultingChemical(SilverChloridePrefab);
-            CreateResultingChemical(SodiumNitratePrefab);
-        }
-        else if ((chemical1 == "Lead Nitrate" && chemical2 == "Potassium Iodide") || (chemical1 == "Potassium Iodide" && chemical2 == "Lead Nitrate"))
-        {
-            Debug.Log("Lead Nitrate + Potassium Iodide → Lead Iodide + Potassium Nitrate");
-            CreateResultingChemical(LeadIodidePrefab);
-            CreateResultingChemical(PotassiumNitratePrefab);
-        }
-        else if ((chemical1 == "Calcium Carbonate" && chemical2 == "Heat") || (chemical1 == "Heat" && chemical2 == "Calcium Carbonate"))
-        {
-            Debug.Log("Calcium Carbonate → Calcium Oxide + Carbon Dioxide");
-            CreateResultingChemical(CalciumOxidePrefab);
-            CreateResultingChemical(CO2Prefab);
-        }
-        else if ((chemical1 == "Hydrogen Peroxide" && chemical2 == "Manganese Dioxide") || (chemical1 == "Manganese Dioxide" && chemical2 == "Hydrogen Peroxide"))
-        {
-            Debug.Log("Hydrogen Peroxide → Water + Oxygen (with catalyst)");
-            CreateResultingChemical(WaterPrefab);
-            CreateResultingChemical(OxygenPrefab);
-        }
-        else if ((chemical1 == "Magnesium" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "Magnesium"))
-        {
-            Debug.Log("Magnesium + Oxygen → Magnesium Oxide");
-            CreateResultingChemical(MagnesiumOxidePrefab);
-        }
-        else if ((chemical1 == "Cobalt Chloride (Hydrated)" && chemical2 == "Heat") || (chemical1 == "Heat" && chemical2 == "Cobalt Chloride (Hydrated)"))
-        {
-            Debug.Log("Cobalt Chloride (Hydrated) → Cobalt Chloride (Anhydrous) + Water");
-            CreateResultingChemical(AnhydrousCobaltPrefab);
-            CreateResultingChemical(WaterPrefab);
+            ProcessCombination(chemical1, chemical2);
         }
         else
         {
-            Debug.Log("The chemicals cannot be mixed.");
+            ShowHintText("These chemicals cannot be mixed.");
         }
-
-        ClearSlots();
     }
 
-    private void CreateResultingChemical(GameObject resultPrefab)
+    private void ProcessCombination(string chemical1, string chemical2)
     {
-        GameObject newChemical = Instantiate(resultPrefab, Result_Slot.position, Result_Slot.rotation);
-        Debug.Log($"Created: {newChemical.name}");
+        string resultChemical = "";
+
+        if ((chemical1 == "H2" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "H2"))
+        {
+            resultChemical = "Water";
+            CreateResultingChemical(WaterPrefab);
+            objectiveManager.SetObjective("Great! Now mix Methane and Oxygen to create Carbon Dioxide");
+            ShowHintText("You created Water by mixing Hydrogen and Oxygen!");
+        }
+        else if ((chemical1 == "Hydrogen" && chemical2 == "Hydrogen") || (chemical1 == "Hydrogen (Clone)" && chemical2 == "Hydrogen (Clone)"))
+        {
+            resultChemical = "H2";
+            CreateResultingChemical(H2Prefab);
+            objectiveManager.SetObjective("Now mix Methane and Oxygen to create Carbon Dioxide.");
+            ShowHintText("You created Hydrogen!");
+        }
+        else if ((chemical1 == "Methane" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "Methane"))
+        {
+            resultChemical = "Carbon Dioxide + Water";
+            CreateResultingChemical(CO2Prefab);
+            CreateResultingChemical(WaterPrefab);
+            objectiveManager.SetObjective("Great! Now mix Hydrogen and Oxygen to create Water.");
+            ShowHintText("You created Carbon Dioxide and Water!");
+        }
+        else if ((chemical1 == "Hydrochloric Acid" && chemical2 == "Sodium Hydroxide") || (chemical1 == "Sodium Hydroxide" && chemical2 == "Hydrochloric Acid"))
+        {
+            resultChemical = "Sodium Chloride + Water";
+            CreateResultingChemical(SodiumChloridePrefab);
+            CreateResultingChemical(WaterPrefab);
+            objectiveManager.SetObjective("Next, mix Sulfuric Acid and Sodium Carbonate to create Sodium Sulfate.");
+            ShowHintText("You created Sodium Chloride and Water!");
+        }
+        else if ((chemical1 == "Sulfuric Acid" && chemical2 == "Sodium Carbonate") || (chemical1 == "Sodium Carbonate" && chemical2 == "Sulfuric Acid"))
+        {
+            resultChemical = "Sodium Sulfate + Carbon Dioxide + Water";
+            CreateResultingChemical(SodiumSulfatePrefab);
+            CreateResultingChemical(CO2Prefab);
+            CreateResultingChemical(WaterPrefab);
+            objectiveManager.SetObjective("Great! Now mix Copper Sulfate and Iron to create Iron Sulfate.");
+            ShowHintText("You created Sodium Sulfate, Carbon Dioxide, and Water!");
+        }
+        else if ((chemical1 == "Copper Sulfate" && chemical2 == "Iron") || (chemical1 == "Iron" && chemical2 == "Copper Sulfate"))
+        {
+            resultChemical = "Iron Sulfate + Copper";
+            CreateResultingChemical(IronSulfatePrefab);
+            CreateResultingChemical(CopperPrefab);
+            objectiveManager.SetObjective("Now, mix Zinc and Hydrochloric Acid to create Zinc Chloride.");
+            ShowHintText("You created Iron Sulfate and Copper!");
+        }
+        else if ((chemical1 == "Zinc" && chemical2 == "Hydrochloric Acid") || (chemical1 == "Hydrochloric Acid" && chemical2 == "Zinc"))
+        {
+            resultChemical = "Zinc Chloride + Hydrogen";
+            CreateResultingChemical(ZincChloridePrefab);
+            CreateResultingChemical(H2Prefab);
+            objectiveManager.SetObjective("Nice! Mix Lead Nitrate and Potassium Iodide to create Lead Iodide.");
+            ShowHintText("You created Zinc Chloride and Hydrogen!");
+        }
+        else if ((chemical1 == "Lead Nitrate" && chemical2 == "Potassium Iodide") || (chemical1 == "Potassium Iodide" && chemical2 == "Lead Nitrate"))
+        {
+            resultChemical = "Lead Iodide";
+            CreateResultingChemical(LeadIodidePrefab);
+            objectiveManager.SetObjective("Awesome! Mix Sodium Chloride and Silver Nitrate to create Silver Chloride.");
+            ShowHintText("You created Lead Iodide!");
+        }
+        else if ((chemical1 == "Sodium Chloride" && chemical2 == "Silver Nitrate") || (chemical1 == "Silver Nitrate" && chemical2 == "Sodium Chloride"))
+        {
+            resultChemical = "Silver Chloride";
+            CreateResultingChemical(SilverChloridePrefab);
+            objectiveManager.SetObjective("Nice! Mix Lead Nitrate and Potassium Iodide to create Lead Iodide.");
+            ShowHintText("You created Silver Chloride!");
+        }
+    }
+
+    private void CreateResultingChemical(GameObject prefab)
+    {
+        Instantiate(prefab, Result_Slot.position, Quaternion.identity, Result_Slot);
+    }
+
+    private void ShowHintText(string message)
+    {
+        if (HintText != null)
+        {
+            HintText.text = message;
+        }
     }
 
     private void ClearSlots()

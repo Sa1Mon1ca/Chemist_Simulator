@@ -390,6 +390,7 @@
 "Assets/Scripts/Camera/MoveCamera.cs"
 "Assets/Scripts/Camera/PlayerCam.cs"
 "Assets/Scripts/Player/Chair.cs"
+"Assets/Scripts/Player/ObjectiveManager.cs"
 "Assets/Scripts/Player/PlayerMovement.cs"
 "Assets/Scripts/Player/PlayerPickUp.cs"
 "Assets/Scripts/Player/Table.cs"
