@@ -112,22 +112,54 @@ public class PlayerPickUp : MonoBehaviour
         }
     }
 
-    private string GetHintForChemical(string chemicalName)
+    public string GetHintForChemical(string chemicalName)
     {
         switch (chemicalName)
         {
             case "H2":
-                return "Hint: Mix Hydrogen with Oxygen to create Water.";
+                return "Mixable with Oxygen.";
             case "Hydrogen":
-                return "Hint: Mix Hydrogen and Hydrogen to create H2";
+                return "Mixable with Hydrogen.";
             case "Methane":
-                return "Hint: Mix Methane with Oxygen to create Carbon Dioxide.";
+                return "Mixable with Oxygen.";
             case "Oxygen":
-                return "Hint: Oxygen can react with multiple chemicals like Hydrogen and Methane.";
+                return "Mixable with Hydrogen, Methane, Magnesium, and more.";
             case "Sodium Hydroxide":
-                return "Hint: Mix Sodium Hydroxide with Hydrochloric Acid to create Salt Water.";
+                return "Mixable with Hydrochloric Acid.";
             case "Hydrochloric Acid":
-                return "Hint: Mix Hydrochloric Acid with Sodium Hydroxide or Zinc.";
+                return "Mixable with Sodium Hydroxide, Zinc.";
+            case "Sulfuric Acid":
+                return "Mixable with Sodium Carbonate.";
+            case "Sodium Carbonate":
+                return "Mixable with Sulfuric Acid.";
+            case "Copper Sulfate":
+                return "Mixable with Iron.";
+            case "Iron":
+                return "Mixable with Copper Sulfate.";
+            case "Zinc":
+                return "Mixable with Hydrochloric Acid.";
+            case "Silver Nitrate":
+                return "Mixable with Sodium Chloride.";
+            case "Sodium Chloride":
+                return "Mixable with Silver Nitrate.";
+            case "Lead Nitrate":
+                return "Mixable with Potassium Iodide.";
+            case "Potassium Iodide":
+                return "Mixable with Lead Nitrate.";
+            case "Calcium Carbonate":
+                return "Heating.";
+            case "Heat":
+                return "Heatable with Calcium Carbonate, Cobalt Chloride (Hydrated).";
+            case "Hydrogen Peroxide":
+                return "Mixable with Manganese Dioxide.";
+            case "Manganese Dioxide":
+                return "Mixable with Hydrogen Peroxide.";
+            case "Magnesium":
+                return "Mixable with Oxygen.";
+            case "Cobalt Chloride (Hydrated)":
+                return "Mixable with Heat.";
+            case "Cobalt Chloride (Anhydrous)":
+                return "Hint: No known mixes.";
             default:
                 return "Hint: No specific hint for this chemical. Try experimenting!";
         }

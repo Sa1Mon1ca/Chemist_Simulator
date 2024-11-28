@@ -11,7 +11,7 @@ public class ObjectiveManager : MonoBehaviour
 
     private void Start()
     {
-        SetObjective("Objective: Mix Hydrogen and Oxygen to create Water.");
+        SetObjective("Objective: Mix Hydrogen and Oxygen.");
 
     }
 
