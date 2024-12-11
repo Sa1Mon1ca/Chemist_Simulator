@@ -32,9 +32,25 @@ public class Table_Script : MonoBehaviour
 
     private Dictionary<string, List<string>> possibleMixes = new Dictionary<string, List<string>>();
 
+    private List<string> objectives = new List<string>
+    {
+        "Great! Now mix Methane and Oxygen to create Carbon Dioxide.",
+        "Now mix Hydrogen and Oxygen to create Water.",
+        "Next, mix Sulfuric Acid and Sodium Carbonate to create Sodium Sulfate.",
+        "Great! Now mix Copper Sulfate and Iron to create Iron Sulfate.",
+        "Now, mix Zinc and Hydrochloric Acid to create Zinc Chloride.",
+        "Nice! Mix Lead Nitrate and Potassium Iodide to create Lead Iodide.",
+        "Awesome! Mix Sodium Chloride and Silver Nitrate to create Silver Chloride.",
+        "Good! Now try mixing Hydrogen Peroxide with Manganese Dioxide.",
+        "Great job! Mix Magnesium and Oxygen to create Magnesium Oxide.",
+        "Excellent! Continue exploring chemical combinations."
+    };
+    private int objectiveIndex = 0;
+
     private void Start()
     {
         InitializeMixes();
+        UpdateObjectiveText();
 
         GameObject chemicalObject = GameObject.FindGameObjectWithTag("Chemical");
         if (chemicalObject != null)
@@ -53,7 +69,7 @@ public class Table_Script : MonoBehaviour
             HintText.text = "";
         }
     }
-
+    
     private void InitializeMixes()
     {
         // Define possible mixes for each chemical
@@ -112,33 +128,27 @@ public class Table_Script : MonoBehaviour
 
     private void ProcessCombination(string chemical1, string chemical2)
     {
-        
-        // Handle individual valid combinations
-        if ((chemical1 == "H2" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "H2"))
+         //Handle individual valid combinations
+        if ((chemical1 == "H2" && chemical2 == "Oxygen") || 
+            (chemical1 == "Oxygen" && chemical2 == "H2"))
         {
             CreateResultingChemical(WaterPrefab);
-            objectiveManager.SetObjective("Great! Now mix Methane and Oxygen to create Carbon Dioxide");
+            MoveToNextObjective();
             ShowHintText("You created Water by mixing Hydrogen and Oxygen!");
-        }
-        else if ((chemical1 == "Hydrogen" && chemical2 == "Hydrogen") || (chemical1 == "Hydrogen (Clone)" && chemical2 == "Hydrogen (Clone)"))
-        {
-            CreateResultingChemical(H2Prefab);
-            objectiveManager.SetObjective("Now mix Methane and Oxygen to create Carbon Dioxide.");
-            ShowHintText("You created Hydrogen!");
         }
         else if ((chemical1 == "Methane" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "Methane"))
         {
             // Only create the correct number of chemicals
             CreateResultingChemical(CO2Prefab);
             CreateResultingChemical(WaterPrefab);
-            objectiveManager.SetObjective("Great! Now mix Hydrogen and Oxygen to create Water.");
+            MoveToNextObjective();
             ShowHintText("You created Carbon Dioxide and Water!");
         }
         else if ((chemical1 == "Hydrochloric Acid" && chemical2 == "Sodium Hydroxide") || (chemical1 == "Sodium Hydroxide" && chemical2 == "Hydrochloric Acid"))
         {
             CreateResultingChemical(SodiumChloridePrefab);
             CreateResultingChemical(WaterPrefab);
-            objectiveManager.SetObjective("Next, mix Sulfuric Acid and Sodium Carbonate to create Sodium Sulfate.");
+            MoveToNextObjective();
             ShowHintText("You created Sodium Chloride and Water!");
         }
         else if ((chemical1 == "Sulfuric Acid" && chemical2 == "Sodium Carbonate") || (chemical1 == "Sodium Carbonate" && chemical2 == "Sulfuric Acid"))
@@ -146,59 +156,59 @@ public class Table_Script : MonoBehaviour
             CreateResultingChemical(SodiumSulfatePrefab);
             CreateResultingChemical(CO2Prefab);
             CreateResultingChemical(WaterPrefab);
-            objectiveManager.SetObjective("Great! Now mix Copper Sulfate and Iron to create Iron Sulfate.");
+            MoveToNextObjective();
             ShowHintText("You created Sodium Sulfate, Carbon Dioxide, and Water!");
         }
         else if ((chemical1 == "Copper Sulfate" && chemical2 == "Iron") || (chemical1 == "Iron" && chemical2 == "Copper Sulfate"))
         {
             CreateResultingChemical(IronSulfatePrefab);
             CreateResultingChemical(CopperPrefab);
-            objectiveManager.SetObjective("Now, mix Zinc and Hydrochloric Acid to create Zinc Chloride.");
+            MoveToNextObjective();
             ShowHintText("You created Iron Sulfate and Copper!");
         }
         else if ((chemical1 == "Zinc" && chemical2 == "Hydrochloric Acid") || (chemical1 == "Hydrochloric Acid" && chemical2 == "Zinc"))
         {
             CreateResultingChemical(ZincChloridePrefab);
             CreateResultingChemical(H2Prefab);
-            objectiveManager.SetObjective("Nice! Mix Lead Nitrate and Potassium Iodide to create Lead Iodide.");
+            MoveToNextObjective();
             ShowHintText("You created Zinc Chloride and Hydrogen!");
         }
         else if ((chemical1 == "Lead Nitrate" && chemical2 == "Potassium Iodide") || (chemical1 == "Potassium Iodide" && chemical2 == "Lead Nitrate"))
         {
             CreateResultingChemical(LeadIodidePrefab);
-            objectiveManager.SetObjective("Awesome! Mix Sodium Chloride and Silver Nitrate to create Silver Chloride.");
+            MoveToNextObjective();
             ShowHintText("You created Lead Iodide!");
         }
         else if ((chemical1 == "Sodium Chloride" && chemical2 == "Silver Nitrate") || (chemical1 == "Silver Nitrate" && chemical2 == "Sodium Chloride"))
         {
             CreateResultingChemical(SilverChloridePrefab);
-            objectiveManager.SetObjective("Nice! Mix Lead Nitrate and Potassium Iodide to create Lead Iodide.");
+            MoveToNextObjective();
             ShowHintText("You created Silver Chloride!");
         }
         else if ((chemical1 == "Calcium Carbonate" && chemical2 == "Heat") || (chemical1 == "Heat" && chemical2 == "Calcium Carbonate"))
         {
             CreateResultingChemical(CalciumOxidePrefab);
             CreateResultingChemical(CO2Prefab);
-            objectiveManager.SetObjective("Good! Now try mixing Hydrogen Peroxide with Manganese Dioxide.");
+            MoveToNextObjective();
             ShowHintText("You created Calcium Oxide and Carbon Dioxide!");
         }
         else if ((chemical1 == "Hydrogen Peroxide" && chemical2 == "Manganese Dioxide") || (chemical1 == "Manganese Dioxide" && chemical2 == "Hydrogen Peroxide"))
         {
             CreateResultingChemical(OxygenPrefab);
             CreateResultingChemical(WaterPrefab);
-            objectiveManager.SetObjective("Great job! Mix Magnesium and Oxygen to create Magnesium Oxide.");
+            MoveToNextObjective();
             ShowHintText("You created Oxygen and Water!");
         }
         else if ((chemical1 == "Magnesium" && chemical2 == "Oxygen") || (chemical1 == "Oxygen" && chemical2 == "Magnesium"))
         {
             CreateResultingChemical(MagnesiumOxidePrefab);
-            objectiveManager.SetObjective("Excellent! Continue exploring chemical combinations.");
+            MoveToNextObjective();
             ShowHintText("You created Magnesium Oxide!");
         }
         else if ((chemical1 == "Cobalt Chloride (Hydrated)" && chemical2 == "Heat") || (chemical1 == "Heat" && chemical2 == "Cobalt Chloride (Hydrated)"))
         {
             CreateResultingChemical(AnhydrousCobaltPrefab);
-            objectiveManager.SetObjective("Great! Continue discovering reactions.");
+            MoveToNextObjective();
             ShowHintText("You created Anhydrous Cobalt Chloride!");
         }
         else
@@ -206,7 +216,6 @@ public class Table_Script : MonoBehaviour
             ShowHintText("These chemicals cannot be mixed.");
         }
     }
-
 
     private void CreateResultingChemical(GameObject prefab)
     {
@@ -272,6 +281,20 @@ public class Table_Script : MonoBehaviour
         else
         {
             Debug.Log("Both chemical slots are full!");
+        }
+    }
+
+    private void MoveToNextObjective()
+    {
+        objectiveIndex = Mathf.Clamp(objectiveIndex + 1, 0, objectives.Count - 1);
+        UpdateObjectiveText();
+    }
+    
+    private void UpdateObjectiveText()
+    {
+        if (objectiveManager != null && objectiveIndex < objectives.Count)
+        {
+            objectiveManager.SetObjective(objectives[objectiveIndex]);
         }
     }
 }
