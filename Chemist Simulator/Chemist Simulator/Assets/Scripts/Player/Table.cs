@@ -25,7 +25,6 @@ public class Table_Script : MonoBehaviour
     public GameObject OxygenPrefab;
     public GameObject CalciumOxidePrefab;
     public GameObject MagnesiumOxidePrefab;
-
     private ObjectiveManager objectiveManager;
     private PlayerPickUp pickUpScript;  // Reference to the PlayerPickUp script
     public TMP_Text HintText;  // Reference to the HintText from PlayerPickUp script

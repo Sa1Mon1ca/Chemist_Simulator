@@ -526,15 +526,6 @@
         },
         {
             "managedAssemblyName": "UnityEngine.dll",
-            "nativeClass": "ReflectionProbe",
-            "fullManagedTypeName": "UnityEngine.ReflectionProbe",
-            "moduleName": "Core",
-            "usedInScenes": [
-                "Assets/Scenes/GameScene.unity"
-            ]
-        },
-        {
-            "managedAssemblyName": "UnityEngine.dll",
             "nativeClass": "Renderer",
             "fullManagedTypeName": "UnityEngine.Renderer",
             "moduleName": "Core",
